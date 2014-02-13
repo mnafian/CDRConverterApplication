@@ -7,32 +7,40 @@ Public Class Form1
 
         Dim sr As New IO.StreamReader(TextBox1.Text)
         Dim dt As New DataTable
+
         Dim newline() As String = sr.ReadLine.Split(","c)
-        dt.Columns.AddRange({New DataColumn(newline(4)), _
-                             New DataColumn(newline(7)), _
-                             New DataColumn(newline(8)), _
-                             New DataColumn(newline(9)), _
-                             New DataColumn(newline(28)), _
-                             New DataColumn(newline(29)), _
-                             New DataColumn(newline(47)), _
-                             New DataColumn(newline(48)), _
-                             New DataColumn(newline(49)), _
-                             New DataColumn(newline(51)), _
-                             New DataColumn(newline(52)), _
-                             New DataColumn(newline(53)), _
-                             New DataColumn(newline(54)), _
-                             New DataColumn(newline(55)), _
-                             New DataColumn(newline(56)), _
-                             New DataColumn(newline(57)), _
-                             New DataColumn(newline(80)), _
-                             New DataColumn(newline(81))})
+        dt.Columns.AddRange({New DataColumn(newline(4).Trim(New Char() {""""})), _
+                             New DataColumn(newline(7).Trim(New Char() {""""})), _
+                             New DataColumn(newline(8).Trim(New Char() {""""})), _
+                             New DataColumn(newline(9).Trim(New Char() {""""})), _
+                             New DataColumn(newline(28).Trim(New Char() {""""})), _
+                             New DataColumn(newline(29).Trim(New Char() {""""})), _
+                             New DataColumn(newline(47).Trim(New Char() {""""})), _
+                             New DataColumn(newline(48).Trim(New Char() {""""})), _
+                             New DataColumn(newline(49).Trim(New Char() {""""})), _
+                             New DataColumn(newline(51).Trim(New Char() {""""})), _
+                             New DataColumn(newline(52).Trim(New Char() {""""})), _
+                             New DataColumn(newline(53).Trim(New Char() {""""})), _
+                             New DataColumn(newline(54).Trim(New Char() {""""})), _
+                             New DataColumn(newline(55).Trim(New Char() {""""})), _
+                             New DataColumn(newline(56).Trim(New Char() {""""})), _
+                             New DataColumn(newline(57).Trim(New Char() {""""})), _
+                             New DataColumn(newline(80).Trim(New Char() {""""})), _
+                             New DataColumn(newline(81).Trim(New Char() {""""}))})
+        sr.ReadLine.Remove(2)
         While (Not sr.EndOfStream)
-            newline = sr.ReadLine.Split(","c)
+            newline = sr.ReadLine.Split(",")
             Dim newrow As DataRow = dt.NewRow
-            newrow.ItemArray = {newline(4), newline(7), newline(8), newline(9), newline(28), newline(29), newline(47), newline(48), newline(49), newline(51), newline(52), newline(53), newline(54), newline(55), newline(56), newline(57), newline(80), newline(81)}
+            newrow.ItemArray = {(((Convert.ToInt32(newline(4)) + (3 * 3600)) / 86400) + 25569), newline(7), newline(8).Trim(New Char() {""""}), newline(9).Trim(New Char() {""""}), newline(28), newline(29).Trim(New Char() {""""}), newline(47), newline(48), newline(49).Trim(New Char() {""""}), newline(51), newline(52).Trim(New Char() {""""}), newline(53).Trim(New Char() {""""}), newline(54).Trim(New Char() {""""}), newline(55), newline(56).Trim(New Char() {""""}), newline(57).Trim(New Char() {""""}), newline(80).Trim(New Char() {""""}), newline(81).Trim(New Char() {""""})}
             dt.Rows.Add(newrow)
         End While
+
         DataGridView1.DataSource = dt
+        DataGridView1.Columns(0).DefaultCellStyle.Format = "MM'/'dd'/'yyyy"
+    End Sub
+
+    Sub CopyData()
+
     End Sub
 
     Sub ConvertFile()
@@ -55,7 +63,7 @@ Public Class Form1
                 For I = 0 To rowsTotal
                     For j = 0 To colsTotal
                         .Cells(I + 1, j + 1).value = DataGridView1.Rows(I).Cells(j).Value
-
+                        '.Range("A2:A").Formula = "=(((" + DataGridView1.Rows(I).Cells(j).Value + "+(3*3600))/86400)+25569)"
                     Next j
                 Next I
                 '.Rows("1:1").Font.FontStyle = "Bold"
@@ -64,7 +72,7 @@ Public Class Form1
                 .Cells.Select()
                 .Cells.EntireColumn.AutoFit()
                 .Cells(1, 1).Select()
-                '.Range("A1:A8").Formula = "=(((" + DataGridView1.Rows(I).Cells(j).Value + "+(3*3600))/86400)+25569)"
+
 
             End With
         Catch ex As Exception
@@ -83,7 +91,5 @@ Public Class Form1
 
     Private Sub Button2_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Button2.Click
         Call ConvertFile()
-
-
     End Sub
 End Class
