@@ -31,7 +31,7 @@ Public Class Form1
         While (Not sr.EndOfStream)
             newline = sr.ReadLine.Split(",")
             Dim newrow As DataRow = dt.NewRow
-            newrow.ItemArray = {(((Convert.ToInt32(newline(4)) + (3 * 3600)) / 86400) + 25569), newline(7), newline(8).Trim(New Char() {""""}), newline(9).Trim(New Char() {""""}), newline(28), newline(29).Trim(New Char() {""""}), newline(47), newline(48), newline(49).Trim(New Char() {""""}), newline(51), newline(52).Trim(New Char() {""""}), newline(53).Trim(New Char() {""""}), newline(54).Trim(New Char() {""""}), newline(55), newline(56).Trim(New Char() {""""}), newline(57).Trim(New Char() {""""}), newline(80).Trim(New Char() {""""}), newline(81).Trim(New Char() {""""})}
+            newrow.ItemArray = {Date.FromOADate((((Convert.ToInt32(newline(4)) + (3 * 3600)) / 86400) + 25569)), Hex(newline(7)), newline(8).Trim(New Char() {""""}), newline(9).Trim(New Char() {""""}), newline(28), newline(29).Trim(New Char() {""""}), Date.FromOADate((((Convert.ToInt32(newline(47)) + (3 * 3600)) / 86400) + 25569)), Date.FromOADate((((Convert.ToInt32(newline(48)) + (3 * 3600)) / 86400) + 25569)), newline(49).Trim(New Char() {""""}), newline(51), newline(52).Trim(New Char() {""""}), newline(53).Trim(New Char() {""""}), newline(54).Trim(New Char() {""""}), newline(55), newline(56).Trim(New Char() {""""}), newline(57).Trim(New Char() {""""}), newline(80).Trim(New Char() {""""}), newline(81).Trim(New Char() {""""})}
             dt.Rows.Add(newrow)
         End While
 
@@ -91,5 +91,9 @@ Public Class Form1
 
     Private Sub Button2_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Button2.Click
         Call ConvertFile()
+    End Sub
+
+    Private Sub Button3_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Button3.Click
+        TextBox3.Text = Date.FromOADate(TextBox2.Text)
     End Sub
 End Class
