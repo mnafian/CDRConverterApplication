@@ -1,6 +1,12 @@
 ﻿Imports Excel = Microsoft.Office.Interop.Excel
 Public Class Form1
     Dim xlApp As New Excel.Application
+    Public OrigIp As String
+    Public DesIp As String
+    Dim listIP1 As New ArrayList
+    Dim listIP2 As New ArrayList
+    Public num1 As String
+    Public num2 As String
     Sub OpenFile()
         OpenFileDialog1.ShowDialog()
         TextBox1.Text = OpenFileDialog1.FileName
@@ -27,61 +33,45 @@ Public Class Form1
                              New DataColumn(newline(57).Trim(New Char() {""""})), _
                              New DataColumn(newline(80).Trim(New Char() {""""})), _
                              New DataColumn(newline(81).Trim(New Char() {""""}))})
-        sr.ReadLine.Remove(2)
+        sr.ReadLine.Remove(0)
+       
         While (Not sr.EndOfStream)
             newline = sr.ReadLine.Split(",")
             Dim newrow As DataRow = dt.NewRow
-            newrow.ItemArray = {Date.FromOADate((((Convert.ToInt32(newline(4)) + (3 * 3600)) / 86400) + 25569)), Hex(newline(7)), newline(8).Trim(New Char() {""""}), newline(9).Trim(New Char() {""""}), newline(28), newline(29).Trim(New Char() {""""}), Date.FromOADate((((Convert.ToInt32(newline(47)) + (3 * 3600)) / 86400) + 25569)), Date.FromOADate((((Convert.ToInt32(newline(48)) + (3 * 3600)) / 86400) + 25569)), newline(49).Trim(New Char() {""""}), newline(51), newline(52).Trim(New Char() {""""}), newline(53).Trim(New Char() {""""}), newline(54).Trim(New Char() {""""}), newline(55), newline(56).Trim(New Char() {""""}), newline(57).Trim(New Char() {""""}), newline(80).Trim(New Char() {""""}), newline(81).Trim(New Char() {""""})}
+
+            For i As Integer = 1 To 4
+                If (Hex(newline(7)).Length) = 8 Then
+                    OrigIp = Convert.ToInt32(Hex(newline(7)).Substring(Hex(newline(7)).Length - (2 * i), 2), 16)
+                ElseIf (Hex(newline(7)).Length) = 7 Then
+                    Dim kar As String = "0" + Hex(newline(7))
+                    OrigIp = Convert.ToInt32(kar.Substring(kar.Length - (2 * i), 2), 16)
+                End If
+                listIP1.Add(OrigIp)
+            Next
+
+            For i As Integer = 1 To 4
+                If (Hex(newline(28)).Length) = 8 Then
+                    DesIp = Convert.ToInt32(Hex(newline(28)).Substring(Hex(newline(28)).Length - (2 * i), 2), 16)
+                ElseIf (Hex(newline(28)).Length) = 7 Then
+                    Dim kar As String = "0" + Hex(newline(28))
+                    DesIp = Convert.ToInt32(kar.Substring(kar.Length - (2 * i), 2), 16)
+                ElseIf (Hex(newline(28)).Length) = 1 Then
+                    DesIp = 0
+                End If
+                listIP2.Add(DesIp)
+            Next
+
+            num1 = (Join(listIP1.ToArray, "."))
+            num2 = (Join(listIP2.ToArray, "."))
+            newrow.ItemArray = {Date.FromOADate((((Convert.ToInt32(newline(4)) + (3 * 3600)) / 86400) + 25569)), num1, newline(8).Trim(New Char() {""""}), newline(9).Trim(New Char() {""""}), num2, newline(29).Trim(New Char() {""""}), Date.FromOADate((((Convert.ToInt32(newline(47)) + (3 * 3600)) / 86400) + 25569)), Date.FromOADate((((Convert.ToInt32(newline(48)) + (3 * 3600)) / 86400) + 25569)), newline(49).Trim(New Char() {""""}), newline(51), newline(52).Trim(New Char() {""""}), newline(53).Trim(New Char() {""""}), newline(54).Trim(New Char() {""""}), newline(55), newline(56).Trim(New Char() {""""}), newline(57).Trim(New Char() {""""}), newline(80).Trim(New Char() {""""}), newline(81).Trim(New Char() {""""})}
             dt.Rows.Add(newrow)
+            listIP1.Clear()
+            listIP2.Clear()
         End While
-
         DataGridView1.DataSource = dt
-        DataGridView1.Columns(0).DefaultCellStyle.Format = "MM'/'dd'/'yyyy"
     End Sub
 
-    Sub CopyData()
-
-    End Sub
-
-    Sub ConvertFile()
-        Dim rowsTotal, colsTotal As Short
-        Dim I, j, iC As Short
-        System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.WaitCursor
-
-        Try
-            Dim excelBook As Excel.Workbook = xlApp.Workbooks.Add
-            Dim excelWorksheet As Excel.Worksheet = CType(excelBook.Worksheets(1), Excel.Worksheet)
-            xlApp.Visible = True
-            rowsTotal = DataGridView1.RowCount - 1
-            colsTotal = DataGridView1.Columns.Count - 1
-            With excelWorksheet
-                .Cells.Select()
-                .Cells.Delete()
-                'For iC = 0 To colsTotal
-                '.Cells(1, iC + 1).Value = DataGridView1.Columns(iC).HeaderText
-                'Next
-                For I = 0 To rowsTotal
-                    For j = 0 To colsTotal
-                        .Cells(I + 1, j + 1).value = DataGridView1.Rows(I).Cells(j).Value
-                        '.Range("A2:A").Formula = "=(((" + DataGridView1.Rows(I).Cells(j).Value + "+(3*3600))/86400)+25569)"
-                    Next j
-                Next I
-                '.Rows("1:1").Font.FontStyle = "Bold"
-                .Rows("1:1").Font.Size = 10
-                .Cells.Columns.AutoFit()
-                .Cells.Select()
-                .Cells.EntireColumn.AutoFit()
-                .Cells(1, 1).Select()
-
-
-            End With
-        Catch ex As Exception
-            MsgBox("Export Excel Error " & ex.Message)
-        Finally
-            'RELEASE ALLOACTED RESOURCES
-            System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default
-            xlApp = Nothing
-        End Try
+    Sub line7()
 
     End Sub
 
@@ -89,11 +79,7 @@ Public Class Form1
         Call OpenFile()
     End Sub
 
-    Private Sub Button2_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Button2.Click
-        Call ConvertFile()
-    End Sub
+    Private Sub Timer1_Tick(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Timer1.Tick
 
-    Private Sub Button3_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Button3.Click
-        TextBox3.Text = Date.FromOADate(TextBox2.Text)
     End Sub
 End Class
